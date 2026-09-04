@@ -15,6 +15,10 @@ MAP="$ROOT/port/include-map.txt"
 [ -d "$SRC" ] || { echo "missing $SRC (set WINFISH_SRC to override)"; exit 1; }
 [ -f "$MAP" ] || { echo "missing $MAP"; exit 1; }
 
+# Ensure libopenmpt's svn_version.h exists (ignored by poplib/.gitignore)
+mkdir -p "$ROOT/poplib/external/libopenmpt/build/svn_version"
+touch "$ROOT/poplib/external/libopenmpt/build/svn_version/svn_version.h"
+
 echo "== 1. copying sources =="
 rm -rf "$DST"
 mkdir -p "$DST"
@@ -22,6 +26,8 @@ cp "$SRC"/*.cpp "$SRC"/*.h "$DST"/ 2>/dev/null
 cp "$SRC"/*.rc "$SRC"/*.ico "$SRC"/*.xml "$DST"/ 2>/dev/null
 # the .vcxproj files are replaced by CMake
 rm -f "$DST"/*.vcxproj "$DST"/*.filters
+# Normalize to CRLF so regex and sed block replacements match reliably on both Linux and Windows
+sed -b -i 's/\r*$/\r/' "$DST"/*.cpp "$DST"/*.h
 echo "   $(ls "$DST" | wc -l) files"
 
 echo "== 2. rewriting framework includes =="

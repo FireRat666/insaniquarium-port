@@ -15,6 +15,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(BUILD_TOOLS    OFF CACHE BOOL "" FORCE)
 set(FEATURE_DISCORD_RPC OFF CACHE BOOL "" FORCE)
+
+# libopenmpt requires svn_version.h which is ignored by poplib/.gitignore
+set(OPENMPT_SVN_HEADER "${CMAKE_CURRENT_LIST_DIR}/../poplib/external/libopenmpt/build/svn_version/svn_version.h")
+if(NOT EXISTS "${OPENMPT_SVN_HEADER}")
+	file(MAKE_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/../poplib/external/libopenmpt/build/svn_version")
+	file(TOUCH "${OPENMPT_SVN_HEADER}")
+endif()
+
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../poplib poplib_build)
 
 # --- game sources ------------------------------------------------------------
