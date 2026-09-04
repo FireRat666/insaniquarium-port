@@ -4,6 +4,8 @@
 // Android that is essential: SDLActivity loads libmain.so and calls SDL_main;
 // there is no process main(). On desktop it changes nothing.
 #include <SDL3/SDL_main.h>
+#include <SDL3/SDL.h>
+#include <filesystem>
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
@@ -91,6 +93,17 @@ int main(int argc, char *argv[])
 #ifdef _WIN32
 	SetUnhandledExceptionFilter(WinFishCrashHandler);
 #endif
+
+	const char *aBasePath = SDL_GetBasePath();
+	if (aBasePath != nullptr)
+	{
+		std::error_code anEC;
+#if defined(__cpp_lib_char8_t)
+		std::filesystem::current_path(std::filesystem::path(reinterpret_cast<const char8_t *>(aBasePath)), anEC);
+#else
+		std::filesystem::current_path(std::filesystem::u8path(aBasePath), anEC);
+#endif
+	}
 
 	WinFishApp *aTheApp = new WinFishApp();
 

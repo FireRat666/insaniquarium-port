@@ -1,8 +1,8 @@
 # Insaniquarium Deluxe — native port
 
 Insaniquarium Deluxe (PopCap, 2004) built from the [WinFish][winfish]
-decompilation and running natively on Windows, Android and Linux aarch64
-(PortMaster handhelds).
+decompilation and running natively on Windows, Android, Linux (x86_64) and
+Linux aarch64 (PortMaster handhelds).
 
 This is not an emulator. The game's original framework, SexyAppFramework
 (x86, DirectDraw), is replaced by [PopLib][poplib], a community rewrite on
@@ -61,10 +61,35 @@ checkout rather than vendored here, applied by the build script that uses it:
 
 ## Building
 
+### 1. Setup & Assets
+
 ```bash
-git clone --recurse-submodules <this repo>
-bash port/port.sh          # source/WinFish -> port/winfish
-bash port/copy-assets.sh   # your game's assets -> port/bin
+git clone <this repo>
+cd insaniquarium-port
+bash setup.sh              # initialises submodules and derives port/winfish
+bash port/copy-assets.sh /path/to/"Insaniquarium Deluxe"
+python3 port/verify-assets.py --fix-case
+```
+
+> **Note on submodules:** PopLib references an optional Discord RPC submodule whose upstream repo was deleted. `setup.sh` automatically configures git to skip it, creates the required `svn_version.h` stub for libopenmpt, and runs `port.sh`.
+
+### 2. Compile
+
+Linux (x86_64 Desktop):
+
+```bash
+bash port/build-linux.sh
+```
+
+Or manually:
+```bash
+cmake -S port -B port/build -DCMAKE_BUILD_TYPE=Release
+cmake --build port/build --parallel
+```
+
+Run the game:
+```bash
+port/bin/Insaniquarium
 ```
 
 Windows (MSVC x64):
