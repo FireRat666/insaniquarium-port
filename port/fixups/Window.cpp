@@ -98,7 +98,11 @@ int main(int argc, char *argv[])
 	if (aBasePath != nullptr)
 	{
 		std::error_code anEC;
-		std::filesystem::current_path(aBasePath, anEC);
+#if defined(__cpp_lib_char8_t)
+		std::filesystem::current_path(std::filesystem::path(reinterpret_cast<const char8_t *>(aBasePath)), anEC);
+#else
+		std::filesystem::current_path(std::filesystem::u8path(aBasePath), anEC);
+#endif
 	}
 
 	WinFishApp *aTheApp = new WinFishApp();
